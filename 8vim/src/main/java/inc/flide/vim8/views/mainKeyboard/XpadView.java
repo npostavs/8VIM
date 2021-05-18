@@ -15,8 +15,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.Random;
-
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import inc.flide.vim8.MainInputMethodService;
@@ -28,7 +26,6 @@ import inc.flide.vim8.preferences.SharedPreferenceHelper;
 import inc.flide.vim8.structures.FingerPosition;
 
 public class XpadView extends View {
-    private final Random rnd = new Random();
     private final Path typingTrailPath = new Path();
     Paint backgroundPaint = new Paint();
     Paint foregroundPaint = new Paint();
@@ -51,7 +48,6 @@ public class XpadView extends View {
     private final float[] trialPathPos = new float[2];
     private final PathMeasure pathMeasure = new PathMeasure();
 
-    boolean userPreferRandomTrailColor = false;
 
     public XpadView(Context context) {
         super(context);
@@ -79,11 +75,6 @@ public class XpadView extends View {
         foregroundColor = sharedPreferenceHelper.getInt(
                 resources.getString(R.string.pref_board_fg_color_key),
                 resources.getColor(R.color.defaultBoardFg));
-
-        userPreferRandomTrailColor = sharedPreferenceHelper.getBoolean(
-                resources.getString(R.string.pref_random_trail_color_key),
-                false );
-
         trailColor = sharedPreferenceHelper.getInt(
                 resources.getString(R.string.pref_trail_color_key),
                 resources.getColor(R.color.defaultTrail));
@@ -320,11 +311,6 @@ public class XpadView extends View {
         }
     }
 
-    private int getRandomColor() {
-        int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-        return color;
-    }
-
     private String getCharacterSetToDisplay() {
         String characterSetSmall = "nomufv!weilhkj@,tscdzg.'yabrpxq?";
         String characterSetCaps = "NOMUFV!WEILHKJ@_TSCDZG-\"YABRPXQ*";
@@ -354,9 +340,6 @@ public class XpadView extends View {
                 actionListener.movementStarted(currentFingerPosition);
                 typingTrailPath.reset();
                 typingTrailPath.moveTo(e.getX(), e.getY());
-                if (userPreferRandomTrailColor) {
-                    typingTrailPaint.setColor(getRandomColor());
-                }
                 return true;
 
             case MotionEvent.ACTION_MOVE:
